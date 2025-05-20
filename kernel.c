@@ -1,12 +1,11 @@
 #include "kernel.h"
+#include "common.h"
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;
 typedef uint32_t size_t;
 
 extern char __bss[], __bss_end[], __stack_top[];
-
-char greeting[] = "\nHello World!\n";
 
 struct sbiret sbi_call(long arg0, long arg1, long arg2, long arg3, long arg4,
                        long arg5, long fid, long eid) {
@@ -41,10 +40,12 @@ void *memset(void *buf, char c, size_t n) {
 void kernel_main(void) {
     memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 
-    for (int i = 0; i < 14; i++)
-        putchar(greeting[i]);
+    printf("\n\nHello %s\n", "World!");
+    printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
 
-    for (;;);
+    for (;;) {
+        __asm__ __volatile__("wfi");
+    }
 }
 
 __attribute__((section(".text.boot")))
